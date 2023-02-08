@@ -49,38 +49,6 @@ public class Employee {
         return "Employee{" + "emp_no=" + emp_no + ", emp_name=" + emp_name + ", dept=" + dept + '}';
     }
 
-    private static void showData() {
-        try {
-            Employee employee;
-            ResultSet res = Employee.getResultSet();
-            while (res.next()) {
-                employee = new Employee(res);
-                System.out.println(employee.toString());
-            }
-        } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public static void main(String[] args) {
-        Employee employee = new Employee(22, "Marco", "Accounts");
-        try {
-//            int r = employee.pushRecord();
-//            int r = employee.updateRecord();
-            int r = employee.deleteRecord();
-
-            if (r > 0) {
-                System.out.println("Database updated Successfully!");
-            } else {
-                System.err.println("Failed to update database, try again!");
-            }
-        } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        showData();
-    }
-
     public static ResultSet getResultSet() throws ClassNotFoundException, SQLException {
         Class.forName("org.sqlite.JDBC");
         Connection con = DriverManager.getConnection("jdbc:sqlite:Iyad.db");
@@ -89,7 +57,7 @@ public class Employee {
         return res;
     }
 
-    public int pushRecord() throws ClassNotFoundException, SQLException {
+    public int insertRecord() throws ClassNotFoundException, SQLException {
         Class.forName("org.sqlite.JDBC");
         Connection con = DriverManager.getConnection("jdbc:sqlite:Iyad.db");
 
