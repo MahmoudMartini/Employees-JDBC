@@ -1,28 +1,25 @@
 package model;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Employee {
+public class Employee extends DbModel {
 
     private int emp_no;
     private String emp_name;
     private String dept;
 
-    public Employee(ResultSet row) {
+    Employee(ResultSet row) {
         try {
             this.emp_no = row.getInt("emp_no");
             this.emp_name = row.getString("emp_name");
             this.dept = row.getString("dept");
         } catch (SQLException ex) {
             Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
-            System.err.println(ex.getMessage());
         }
     }
 
@@ -49,51 +46,80 @@ public class Employee {
         return "Employee{" + "emp_no=" + emp_no + ", emp_name=" + emp_name + ", dept=" + dept + '}';
     }
 
-    public static ResultSet getResultSet() throws ClassNotFoundException, SQLException {
-        Class.forName("org.sqlite.JDBC");
-        Connection con = DriverManager.getConnection("jdbc:sqlite:Iyad.db");
-        Statement statement = con.createStatement();
-        ResultSet res = statement.executeQuery("SELECT * FROM Employee;");
-        return res;
+    public static ArrayList<Employee> getResultSet() {
+        ArrayList<Employee> arr = null;
+        try {
+            connect();
+            String sql = "SELECT * FROM Employee;";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet res = statement.executeQuery();
+
+            arr = new ArrayList<>();
+            while (res.next()) {
+                arr.add(new Employee(res));
+            }
+            connection.close();
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return arr;
     }
 
-    public int insertRecord() throws ClassNotFoundException, SQLException {
-        Class.forName("org.sqlite.JDBC");
-        Connection con = DriverManager.getConnection("jdbc:sqlite:Iyad.db");
+    @Override
+    public int dbInsert() {
+        try {
+            connect();
+            String sql = "INSERT INTO Employee VALUES (?, ?, ?);";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, Integer.toString(emp_no));
+            statement.setString(2, emp_name);
+            statement.setString(3, dept);
 
-        String sql = "INSERT INTO Employee VALUES (?, ?, ?);";
-        PreparedStatement statement = con.prepareStatement(sql);
-        statement.setString(1, Integer.toString(emp_no));
-        statement.setString(2, emp_name);
-        statement.setString(3, dept);
-
-        int r = statement.executeUpdate();
-        return r;
+            int rows = statement.executeUpdate();
+            statement.close();
+            connection.close();
+            return rows;
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
+            return CONNECTION_ERROR_CODE;
+        }
     }
 
-    public int updateRecord() throws ClassNotFoundException, SQLException {
-        Class.forName("org.sqlite.JDBC");
-        Connection con = DriverManager.getConnection("jdbc:sqlite:Iyad.db");
+    @Override
+    public int dbUpdate() {
+        try {
+            connect();
+            String sql = "UPDATE Employee SET emp_name = ?, dept = ? WHERE emp_no = ?;";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, emp_name);
+            statement.setString(2, dept);
+            statement.setString(3, Integer.toString(emp_no));
 
-        String sql = "UPDATE Employee SET emp_name = ?, dept = ? WHERE emp_no = ?;";
-        PreparedStatement statement = con.prepareStatement(sql);
-        statement.setString(1, emp_name);
-        statement.setString(2, dept);
-        statement.setString(3, Integer.toString(emp_no));
-
-        int r = statement.executeUpdate();
-        return r;
+            int rows = statement.executeUpdate();
+            statement.close();
+            connection.close();
+            return rows;
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
+            return CONNECTION_ERROR_CODE;
+        }
     }
 
-    public int deleteRecord() throws ClassNotFoundException, SQLException {
-        Class.forName("org.sqlite.JDBC");
-        Connection con = DriverManager.getConnection("jdbc:sqlite:Iyad.db");
+    @Override
+    public int dbDelete() {
+        try {
+            connect();
+            String sql = "DELETE FROM Employee WHERE emp_no = ?;";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, Integer.toString(emp_no));
 
-        String sql = "DELETE FROM Employee WHERE emp_no = ?;";
-        PreparedStatement statement = con.prepareStatement(sql);
-        statement.setString(1, Integer.toString(emp_no));
-
-        int r = statement.executeUpdate();
-        return r;
+            int rows = statement.executeUpdate();
+            statement.close();
+            connection.close();
+            return rows;
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
+            return CONNECTION_ERROR_CODE;
+        }
     }
 }
