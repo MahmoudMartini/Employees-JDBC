@@ -4,37 +4,31 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class Employee extends DbModel {
+public class Employee extends DBModel {
 
-    private int emp_no;
-    private String emp_name;
-    private String dept;
+    private int empNo;
+    private String empName = "";
+    private String dept = "";
 
-    Employee(ResultSet row) {
-        try {
-            this.emp_no = row.getInt("emp_no");
-            this.emp_name = row.getString("emp_name");
-            this.dept = row.getString("dept");
-        } catch (SQLException ex) {
-            Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    Employee(ResultSet row) throws SQLException {
+        this.empNo = row.getInt("emp_no");
+        this.empName = row.getString("emp_name");
+        this.dept = row.getString("dept");
     }
 
     public Employee(int emp_no, String emp_name, String dept) {
-        this.emp_no = emp_no;
-        this.emp_name = emp_name;
+        this.empNo = emp_no;
+        this.empName = emp_name;
         this.dept = dept;
     }
 
-    public int getEmp_no() {
-        return emp_no;
+    public int getEmpNo() {
+        return empNo;
     }
 
-    public String getEmp_name() {
-        return emp_name;
+    public String getEmpName() {
+        return empName;
     }
 
     public String getDept() {
@@ -43,83 +37,69 @@ public class Employee extends DbModel {
 
     @Override
     public String toString() {
-        return "Employee{" + "emp_no=" + emp_no + ", emp_name=" + emp_name + ", dept=" + dept + '}';
+        return "Employee{" + "emp_no=" + empNo + ", emp_name=" + empName + ", dept=" + dept + '}';
     }
 
-    public static ArrayList<Employee> getResultSet() {
+    public static ArrayList<Employee> getResultSet() throws ClassNotFoundException, SQLException {
         ArrayList<Employee> arr = null;
-        try {
-            connect();
-            String sql = "SELECT * FROM Employee;";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            ResultSet res = statement.executeQuery();
+        connect();
+        String sql = "SELECT * FROM Employee;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet res = statement.executeQuery();
 
-            arr = new ArrayList<>();
-            while (res.next()) {
-                arr.add(new Employee(res));
-            }
-            connection.close();
-        } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
+        arr = new ArrayList<>();
+        while (res.next()) {
+            arr.add(new Employee(res));
         }
+        connection.close();
         return arr;
     }
 
     @Override
-    public int dbInsert() {
-        try {
-            connect();
-            String sql = "INSERT INTO Employee VALUES (?, ?, ?);";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, Integer.toString(emp_no));
-            statement.setString(2, emp_name);
-            statement.setString(3, dept);
+    public int dbInsert() throws ClassNotFoundException, SQLException {
+        connect();
+        String sql = "INSERT INTO Employee VALUES (?, ?, ?);";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, empNo);
+        statement.setString(2, empName);
+        statement.setString(3, dept);
 
-            int rows = statement.executeUpdate();
-            statement.close();
-            connection.close();
-            return rows;
-        } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
-            return CONNECTION_ERROR_CODE;
-        }
+        int rows = statement.executeUpdate();
+        statement.close();
+        connection.close();
+        return rows;
     }
 
     @Override
-    public int dbUpdate() {
-        try {
-            connect();
-            String sql = "UPDATE Employee SET emp_name = ?, dept = ? WHERE emp_no = ?;";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, emp_name);
-            statement.setString(2, dept);
-            statement.setString(3, Integer.toString(emp_no));
+    public int dbUpdate() throws ClassNotFoundException, SQLException {
+        connect();
+        String sql = "UPDATE Employee SET emp_name = ?, dept = ? WHERE emp_no = ?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, empName);
+        statement.setString(2, dept);
+        statement.setInt(3, empNo);
 
-            int rows = statement.executeUpdate();
-            statement.close();
-            connection.close();
-            return rows;
-        } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
-            return CONNECTION_ERROR_CODE;
-        }
+        int rows = statement.executeUpdate();
+        statement.close();
+        connection.close();
+        return rows;
     }
 
     @Override
-    public int dbDelete() {
-        try {
-            connect();
-            String sql = "DELETE FROM Employee WHERE emp_no = ?;";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, Integer.toString(emp_no));
+    public int dbDelete() throws ClassNotFoundException, SQLException {
+        connect();
+        String sql = "DELETE FROM Employee WHERE emp_no = ?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, empNo);
 
-            int rows = statement.executeUpdate();
-            statement.close();
-            connection.close();
-            return rows;
-        } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(Employee.class.getName()).log(Level.SEVERE, null, ex);
-            return CONNECTION_ERROR_CODE;
-        }
+        int rows = statement.executeUpdate();
+        statement.close();
+        connection.close();
+        return rows;
+    }
+
+    @Override
+    public boolean isValid() {
+        return (empNo > 0) && (!"".equals(empName)) && (!"".equals(dept));
     }
 }

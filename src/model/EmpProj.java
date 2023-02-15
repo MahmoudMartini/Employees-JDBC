@@ -1,74 +1,115 @@
 package model;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
 
-public class EmpProj {
+public class EmpProj extends DBModel {
 
-    private int emp_no;
-    private String proj_id;
+    private int empNo;
+    private String projId;
     private String location;
-    private int weeks_proj;
+    private int weeksProj;
 
-    public EmpProj(ResultSet row) {
-        try {
-            this.emp_no = row.getInt("emp_no");
-            this.proj_id = row.getString("proj_id");
-            this.location = row.getString("location");
-            this.weeks_proj = row.getInt("weeks_proj");
-        } catch (SQLException ex) {
-            Logger.getLogger(EmpProj.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    EmpProj(ResultSet row) throws SQLException {
+        this.empNo = row.getInt("emp_no");
+        this.projId = row.getString("proj_id");
+        this.location = row.getString("location");
+        this.weeksProj = row.getInt("weeks_proj");
     }
 
     public EmpProj(int emp_no, String proj_id, String location, int weeks_proj) {
-        this.emp_no = emp_no;
-        this.proj_id = proj_id;
+        this.empNo = emp_no;
+        this.projId = proj_id;
         this.location = location;
-        this.weeks_proj = weeks_proj;
+        this.weeksProj = weeks_proj;
     }
 
-    public int getEmp_no() {
-        return emp_no;
+    public int getEmpNo() {
+        return empNo;
     }
 
-    public String getProj_id() {
-        return proj_id;
+    public String getProjId() {
+        return projId;
     }
 
     public String getLocation() {
         return location;
     }
 
-    public int getWeeks_proj() {
-        return weeks_proj;
+    public int getWeeksProj() {
+        return weeksProj;
     }
 
     @Override
     public String toString() {
-        return "EmpProj{" + "emp_no=" + emp_no + ", proj_id=" + proj_id + ", location=" + location + ", weeks_proj=" + weeks_proj + '}';
+        return "EmpProj{" + "emp_no=" + empNo + ", proj_id=" + projId + ", location=" + location + ", weeks_proj=" + weeksProj + '}';
     }
 
-    public static void main(String[] args) {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            Connection con = DriverManager.getConnection("jdbc:sqlite:Iyad.db");
-            Statement statement = con.createStatement();
-            ResultSet res = statement.executeQuery("SELECT * FROM EmpProj;");
+    public static ArrayList getResultSet() throws ClassNotFoundException, SQLException {
+        ArrayList<EmpProj> arr;
+        connect();
+        String sql = "SELECT * FROM EmpProj;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet res = statement.executeQuery();
 
-            res.next();
-            EmpProj e1 = new EmpProj(res);
-            System.out.println(e1.toString());
-
-        } catch (ClassNotFoundException | SQLException ex) {
-            System.err.println(ex.getMessage());
+        arr = new ArrayList<>();
+        while (res.next()) {
+            arr.add(new EmpProj(res));
         }
+        connection.close();
+        return arr;
     }
 
+    @Override
+    public int dbInsert() throws ClassNotFoundException, SQLException {
+        connect();
+        String sql = "INSERT INTO EmpProj VALUES (?, ?, ?, ?);";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, empNo);
+        statement.setString(2, projId);
+        statement.setString(3, location);
+        statement.setInt(4, weeksProj);
+
+        int rows = statement.executeUpdate();
+        statement.close();
+        connection.close();
+        return rows;
+    }
+
+    @Override
+    public int dbUpdate() throws ClassNotFoundException, SQLException {
+        connect();
+        String sql = "UPDATE EmpProj SET location = ?, weeks_proj = ? WHERE emp_no = ? AND proj_id = ?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, location);
+        statement.setInt(2, weeksProj);
+        statement.setInt(3, empNo);
+        statement.setString(4, projId);
+
+        int rows = statement.executeUpdate();
+        statement.close();
+        connection.close();
+        return rows;
+    }
+
+    @Override
+    public int dbDelete() throws ClassNotFoundException, SQLException {
+        connect();
+        String sql = "DELETE FROM EmpProj WHERE emp_no = ? AND proj_id = ?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, empNo);
+        statement.setString(2, projId);
+
+        int rows = statement.executeUpdate();
+        statement.close();
+        connection.close();
+        return rows;
+    }
+
+    @Override
+    public boolean isValid() {
+        return (empNo > 0) && (projId != null) && (!"".equals(projId)) && (!"".equals(location)) && (weeksProj > 0);
+    }
 }

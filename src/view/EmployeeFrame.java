@@ -223,7 +223,7 @@ public class EmployeeFrame extends javax.swing.JFrame {
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         employee = new Employee(emp_no, txt_name.getText(), txt_dept.getText());
-        if ("".equals(employee.getEmp_name()) || "".equals(employee.getDept())) {
+        if ("".equals(employee.getEmpName()) || "".equals(employee.getDept())) {
             JOptionPane.showMessageDialog(this, "Some fields mightbe empty", "Failed to add data!", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -233,8 +233,8 @@ public class EmployeeFrame extends javax.swing.JFrame {
 
             String sql = "INSERT INTO Employee VALUES (?, ?, ?);";
             PreparedStatement statement = con.prepareStatement(sql);
-            statement.setString(1, Integer.toString(employee.getEmp_no()));
-            statement.setString(2, employee.getEmp_name());
+            statement.setString(1, Integer.toString(employee.getEmpNo()));
+            statement.setString(2, employee.getEmpName());
             statement.setString(3, employee.getDept());
 
             statement.executeUpdate();
@@ -253,7 +253,7 @@ public class EmployeeFrame extends javax.swing.JFrame {
         int selectedIndex = jTable1.getSelectedRow();
         int id = Integer.parseInt(tblModel.getValueAt(selectedIndex, 0).toString());
         employee = new Employee(id, txt_name.getText(), txt_dept.getText());
-        if ("".equals(employee.getEmp_name()) || "".equals(employee.getDept())) {
+        if ("".equals(employee.getEmpName()) || "".equals(employee.getDept())) {
             JOptionPane.showMessageDialog(this, "Some fields mightbe empty", "Failed to add data!", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -264,9 +264,9 @@ public class EmployeeFrame extends javax.swing.JFrame {
 
             String sql = "UPDATE Employee SET emp_name = ?, dept = ? WHERE emp_no = ?;";
             PreparedStatement statement = con.prepareStatement(sql);
-            statement.setString(1, employee.getEmp_name());
+            statement.setString(1, employee.getEmpName());
             statement.setString(2, employee.getDept());
-            statement.setString(3, Integer.toString(employee.getEmp_no()));
+            statement.setString(3, Integer.toString(employee.getEmpNo()));
 
             statement.executeUpdate();
             JOptionPane.showMessageDialog(this, "Record Updated successfully!");
@@ -304,7 +304,7 @@ public class EmployeeFrame extends javax.swing.JFrame {
 
             String sql = "DELETE FROM Employee WHERE emp_no = ?;";
             PreparedStatement statement = con.prepareStatement(sql);
-            statement.setString(1, Integer.toString(employee.getEmp_no()));
+            statement.setString(1, Integer.toString(employee.getEmpNo()));
 
             statement.executeUpdate();
             JOptionPane.showMessageDialog(this, "Deleted successfully!");
@@ -331,12 +331,12 @@ public class EmployeeFrame extends javax.swing.JFrame {
             while (res.next()) {
                 employee = new Employee(res);
                 Vector v = new Vector();
-                v.add(employee.getEmp_no());
-                v.add(employee.getEmp_name());
+                v.add(employee.getEmpNo());
+                v.add(employee.getEmpName());
                 v.add(employee.getDept());
                 tblModel.addRow(v);
 
-                emp_no = max(emp_no, employee.getEmp_no());
+                emp_no = max(emp_no, employee.getEmpNo());
             }
             ++emp_no;
 
