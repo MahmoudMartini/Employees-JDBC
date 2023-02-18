@@ -1,22 +1,20 @@
 package view;
 
 import static java.lang.Integer.max;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Project;
 
-public class ProjectFrame extends javax.swing.JFrame {
+public class ProjectFrame extends javax.swing.JFrame implements Form {
+
     private Project project;
-    private DefaultTableModel tableModel;
-    private int selectedIndex;
+    private final DefaultTableModel tableModel;
+//    private int selectedIndex;
+    private char selectedId;
     private char availableId;
 
     /**
@@ -181,49 +179,71 @@ public class ProjectFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        project = new Project(Character.toString(availableId) , txtStartDate.getText());
-        
-        if (!project.valid()) {
+        project = new Project(Character.toString(availableId), txtStartDate.getText());
+
+        if (!project.isValid()) {
 //            txtStartDate.setToolTipText("Please enter all information correctly!");
-            String message = "Please check you entered all information and they are correct";
-            JOptionPane.showMessageDialog(this, message, "Incorrect information", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, INVALID_MESSAGE, INVALID_TITLE, JOptionPane.ERROR_MESSAGE);
             updateTable();
             return;
-        } 
+        }
         try {
-            Class.forName("org.sqlite.JDBC");
-            Connection con = DriverManager.getConnection("jdbc:sqlite:Iyad.db");
-            
-            String sqlStatement = "INSERT INTO Project VALUES (?, ?)";
-            PreparedStatement statement = con.prepareStatement(sqlStatement);
-            statement.setString(1, project.getProjId());
-            statement.setString(2, project.getProjStartDate());
-            
-            int success = statement.executeUpdate();
-            
-            if (success == 0) {
-                String message = "Connection error, please try again";
-                JOptionPane.showMessageDialog(this, message);
-                return;
-            }
-            
-            String message = "Project added Successfully!";
-            JOptionPane.showMessageDialog(this, message);
-            txtStartDate.setText("");
+            setBusy(true);
+            project.dbInsert();
+
             updateTable();
+            JOptionPane.showMessageDialog(this, SUCCESS_MESSAGE);
+            txtClear();
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(ProjectFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
+        setBusy(false);
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        project = new Project(Character.toString(selectedId), txtStartDate.getText());
+
+        if (!project.isValid()) {
+            JOptionPane.showMessageDialog(this, INVALID_MESSAGE, INVALID_TITLE, JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            setBusy(true);
+            project.dbUpdate();
+
+            updateTable();
+            JOptionPane.showMessageDialog(this, SUCCESS_MESSAGE);
+            txtClear();
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(ProjectFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        setBusy(false);
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        project = new Project(Character.toString(selectedId), txtStartDate.getText());
+
+        int option = JOptionPane.showConfirmDialog(this, CONFIRM_DELETE_MESSAGE, CONFIRM_DELETE_TITLE, JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (option != JOptionPane.YES_OPTION) {
+            return;
+        }
+        try {
+            setBusy(true);
+            project.dbDelete();
+
+            updateTable();
+            JOptionPane.showMessageDialog(this, SUCCESS_MESSAGE);
+            txtClear();
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(ProjectFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        setBusy(false);
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
-        selectedIndex = jTable1.getSelectedRow();
+        int selectedIndex = jTable1.getSelectedRow();
+
+        selectedId = tableModel.getValueAt(selectedIndex, 0).toString().charAt(0);
         txtStartDate.setText(tableModel.getValueAt(selectedIndex, 1).toString());
     }//GEN-LAST:event_jTable1MouseClicked
 
@@ -275,31 +295,46 @@ public class ProjectFrame extends javax.swing.JFrame {
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField txtStartDate;
     // End of variables declaration//GEN-END:variables
-        
+
     private void updateTable() {
-        
+        tableModel.setRowCount(0);
+        availableId = 'A';
+
+        ArrayList<Project> results = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            Connection con = DriverManager.getConnection("jdbc:sqlite:Iyad.db");
-            Statement statement = con.createStatement();
-            String sqlQuery = "SELECT * FROM Project;";
-            ResultSet result = statement.executeQuery(sqlQuery);
-            
-            tableModel.setRowCount(0);
-            availableId = 'A';
-            while (result.next()) {
-                project = new Project(result);
-                Object [] rowData = {project.getProjId(), project.getProjStartDate()};
-                tableModel.addRow(rowData);
-                
-//                System.out.println(availableId);
-                availableId = (char) max(availableId, project.getProjId().charAt(0));
-            }
-            ++availableId;
-            System.out.println(availableId);
+            results = Project.getResultSet();
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(ProjectFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        for (Project proj : results) {
+            Object[] rowData = {
+                proj.getProjId(),
+                proj.getProjStartDate()
+            };
+            tableModel.addRow(rowData);
+
+            availableId = (char) max(availableId, proj.getProjId().charAt(0));
+        }
+        ++availableId;
+        System.out.println(availableId);
+
         txtStartDate.requestFocus();
+    }
+
+    @Override
+    public void setBusy(boolean b) {
+        addButton.setEnabled(!b);
+        deleteButton.setEnabled(!b);
+        editButton.setEnabled(!b);
+
+        if (b == false) {
+            txtStartDate.requestFocus();
+        }
+    }
+
+    @Override
+    public void txtClear() {
+        txtStartDate.setText("");
     }
 }

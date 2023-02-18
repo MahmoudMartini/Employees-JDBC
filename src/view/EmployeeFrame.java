@@ -1,9 +1,9 @@
 package view;
 
-
 import static java.lang.Integer.max;
 import static java.lang.Integer.min;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,11 +13,18 @@ import model.Employee;
 
 public class EmployeeFrame extends javax.swing.JFrame {
 
+    private Employee employee;
+    private final DefaultTableModel tableModel;
+    private int availableEmpNo;
+//    private int selectedIndex;
+    private int selectedId;
+
     /**
      * Creates new form EmployeeFrame
      */
     public EmployeeFrame() {
         initComponents();
+        tableModel = (DefaultTableModel) jTable1.getModel();
         updateTable();
     }
 
@@ -39,8 +46,8 @@ public class EmployeeFrame extends javax.swing.JFrame {
         addButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         editButton = new javax.swing.JButton();
-        txt_name = new javax.swing.JTextField();
-        txt_dept = new javax.swing.JTextField();
+        txtName = new javax.swing.JTextField();
+        txtDept = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
 
@@ -90,19 +97,9 @@ public class EmployeeFrame extends javax.swing.JFrame {
             }
         });
 
-        txt_name.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txt_name.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_nameActionPerformed(evt);
-            }
-        });
+        txtName.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
-        txt_dept.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txt_dept.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_deptActionPerformed(evt);
-            }
-        });
+        txtDept.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -128,8 +125,8 @@ public class EmployeeFrame extends javax.swing.JFrame {
                             .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txt_name)
-                            .addComponent(txt_dept))))
+                            .addComponent(txtName)
+                            .addComponent(txtDept))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -139,11 +136,11 @@ public class EmployeeFrame extends javax.swing.JFrame {
                 .addGap(56, 56, 56)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(txt_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(57, 57, 57)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(txt_dept, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtDept, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addButton)
@@ -213,137 +210,80 @@ public class EmployeeFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txt_deptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_deptActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_deptActionPerformed
-
-    private void txt_nameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_nameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_nameActionPerformed
-
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        employee = new Employee(emp_no, txt_name.getText(), txt_dept.getText());
-        if ("".equals(employee.getEmpName()) || "".equals(employee.getDept())) {
+        employee = new Employee(availableEmpNo, txtName.getText(), txtDept.getText());
+        if (!employee.isValid()) {
             JOptionPane.showMessageDialog(this, "Some fields mightbe empty", "Failed to add data!", JOptionPane.ERROR_MESSAGE);
             return;
         }
         try {
-            Class.forName("org.sqlite.JDBC");
-            Connection con = DriverManager.getConnection("jdbc:sqlite:Iyad.db");
-
-            String sql = "INSERT INTO Employee VALUES (?, ?, ?);";
-            PreparedStatement statement = con.prepareStatement(sql);
-            statement.setString(1, Integer.toString(employee.getEmpNo()));
-            statement.setString(2, employee.getEmpName());
-            statement.setString(3, employee.getDept());
-
-            statement.executeUpdate();
-            JOptionPane.showMessageDialog(this, "Record added successfully!");
-            txt_name.setText("");
-            txt_dept.setText("");
+            employee.dbInsert();
             updateTable();
+            JOptionPane.showMessageDialog(this, "Record added successfully!");
+            txtName.setText("");
+            txtDept.setText("");
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(EmployeeFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        txt_name.requestFocus();
+        txtName.requestFocus();
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-        DefaultTableModel tblModel = (DefaultTableModel) jTable1.getModel();
-        int selectedIndex = jTable1.getSelectedRow();
-        int id = Integer.parseInt(tblModel.getValueAt(selectedIndex, 0).toString());
-        employee = new Employee(id, txt_name.getText(), txt_dept.getText());
-        if ("".equals(employee.getEmpName()) || "".equals(employee.getDept())) {
+        employee = new Employee(selectedId, txtName.getText(), txtDept.getText());
+
+        if (!employee.isValid()) {
             JOptionPane.showMessageDialog(this, "Some fields mightbe empty", "Failed to add data!", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         try {
-            Class.forName("org.sqlite.JDBC");
-            Connection con = DriverManager.getConnection("jdbc:sqlite:Iyad.db");
+            editButton.setEnabled(false);
+            employee.dbUpdate();
 
-            String sql = "UPDATE Employee SET emp_name = ?, dept = ? WHERE emp_no = ?;";
-            PreparedStatement statement = con.prepareStatement(sql);
-            statement.setString(1, employee.getEmpName());
-            statement.setString(2, employee.getDept());
-            statement.setString(3, Integer.toString(employee.getEmpNo()));
-
-            statement.executeUpdate();
+            txtName.setText("");
+            txtDept.setText("");
             JOptionPane.showMessageDialog(this, "Record Updated successfully!");
-            txt_name.setText("");
-            txt_dept.setText("");
+
             updateTable();
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(EmployeeFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        txt_name.requestFocus();
+        editButton.setEnabled(true);
+        txtName.requestFocus();
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
-        DefaultTableModel tblModel = (DefaultTableModel) jTable1.getModel();
         int selectedIndex = jTable1.getSelectedRow();
-        txt_name.setText(tblModel.getValueAt(selectedIndex, 1).toString());
-        txt_dept.setText(tblModel.getValueAt(selectedIndex, 2).toString());
+
+        selectedId = Integer.parseInt(tableModel.getValueAt(selectedIndex, 0).toString());
+        txtName.setText(tableModel.getValueAt(selectedIndex, 1).toString());
+        txtDept.setText(tableModel.getValueAt(selectedIndex, 2).toString());
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        DefaultTableModel tblModel = (DefaultTableModel) jTable1.getModel();
-        int selectedIndex = jTable1.getSelectedRow();
-        int id = Integer.parseInt(tblModel.getValueAt(selectedIndex, 0).toString());
-        employee = new Employee(id, txt_name.getText(), txt_dept.getText());
-        
+        employee = new Employee(selectedId, txtName.getText(), txtDept.getText());
+
         String confirmMessage = "Deleted records cannot be recovered back.\nDelete any way?";
-        int option = JOptionPane.showConfirmDialog(this, confirmMessage,"Deleting record", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        int option = JOptionPane.showConfirmDialog(this, confirmMessage, "Deleting record", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (option != JOptionPane.YES_OPTION) {
             return;
         }
-        
+
         try {
-            Class.forName("org.sqlite.JDBC");
-            Connection con = DriverManager.getConnection("jdbc:sqlite:Iyad.db");
+            deleteButton.setEnabled(false);
+            employee.dbDelete();
 
-            String sql = "DELETE FROM Employee WHERE emp_no = ?;";
-            PreparedStatement statement = con.prepareStatement(sql);
-            statement.setString(1, Integer.toString(employee.getEmpNo()));
-
-            statement.executeUpdate();
+            txtName.setText("");
+            txtDept.setText("");
             JOptionPane.showMessageDialog(this, "Deleted successfully!");
-            txt_name.setText("");
-            txt_dept.setText("");
+
             updateTable();
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(EmployeeFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        txt_name.requestFocus();
+        deleteButton.setEnabled(true);
+        txtName.requestFocus();
     }//GEN-LAST:event_deleteButtonActionPerformed
-
-    private void updateTable() {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            Connection con = DriverManager.getConnection("jdbc:sqlite:Iyad.db");
-            Statement statement = con.createStatement();
-            ResultSet res = statement.executeQuery("SELECT * FROM employee;");
-            DefaultTableModel tblModel = (DefaultTableModel) jTable1.getModel();
-
-            tblModel.setRowCount(0);
-
-            emp_no = 1;
-            while (res.next()) {
-                employee = new Employee(res);
-                Vector v = new Vector();
-                v.add(employee.getEmpNo());
-                v.add(employee.getEmpName());
-                v.add(employee.getDept());
-                tblModel.addRow(v);
-
-                emp_no = max(emp_no, employee.getEmpNo());
-            }
-            ++emp_no;
-
-        } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(EmployeeFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -388,10 +328,31 @@ public class EmployeeFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField txt_dept;
-    private javax.swing.JTextField txt_name;
+    private javax.swing.JTextField txtDept;
+    private javax.swing.JTextField txtName;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
-    private Employee employee;
-    private int emp_no;
+    
+    private void updateTable() {
+        tableModel.setRowCount(0);
+        availableEmpNo = 1;
+
+        ArrayList<Employee> results = null;
+        try {
+            results = Employee.getResultSet();
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(EmployeeFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        for (Employee emp : results) {
+            Vector v = new Vector();
+            v.add(emp.getEmpNo());
+            v.add(emp.getEmpName());
+            v.add(emp.getDept());
+            tableModel.addRow(v);
+
+            availableEmpNo = max(availableEmpNo, emp.getEmpNo());
+        }
+        ++availableEmpNo;
+    }
 }
