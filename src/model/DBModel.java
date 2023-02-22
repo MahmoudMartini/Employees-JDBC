@@ -9,7 +9,7 @@ import java.util.ArrayList;
 abstract class DBModel {
 
     protected static Connection connection;
-    protected final int CONNECTION_ERROR_CODE = -1;
+//    protected final int CONNECTION_ERROR_CODE = -1;
 
     protected static void connect() throws ClassNotFoundException, SQLException {
         Class.forName("org.sqlite.JDBC");

@@ -40,11 +40,37 @@ public class Employee extends DBModel {
         return "Employee{" + "emp_no=" + empNo + ", emp_name=" + empName + ", dept=" + dept + '}';
     }
 
+    public static Employee getFromNo(int empNO) throws ClassNotFoundException, SQLException {
+        connect();
+        String sql = "SELECT * FROM Employee WHERE emp_no = ?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, empNO);
+        ResultSet res = statement.executeQuery();
+        res.next();
+        return new Employee(res);
+    }
+
     public static ArrayList<Employee> getResultSet() throws ClassNotFoundException, SQLException {
         ArrayList<Employee> arr = null;
         connect();
         String sql = "SELECT * FROM Employee;";
         PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet res = statement.executeQuery();
+
+        arr = new ArrayList<>();
+        while (res.next()) {
+            arr.add(new Employee(res));
+        }
+        connection.close();
+        return arr;
+    }
+
+    public static ArrayList<Employee> getResultSet(Department department) throws ClassNotFoundException, SQLException {
+        ArrayList<Employee> arr = null;
+        connect();
+        String sql = "SELECT * FROM Employee e, department d WHERE e.dept = d.dept AND d.dept = ?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, department.getDept());
         ResultSet res = statement.executeQuery();
 
         arr = new ArrayList<>();

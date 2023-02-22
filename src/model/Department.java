@@ -33,6 +33,16 @@ public class Department extends DBModel {
         return "Department{" + "dept=" + dept + ", manager=" + manager + '}';
     }
 
+    public static Department getFromDept(String dept) throws ClassNotFoundException, SQLException {
+        connect();
+        String sql = "SELECT * FROM Department WHERE dept = ?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, dept);
+        ResultSet res = statement.executeQuery();
+        res.next();
+        return new Department(res);
+    }
+
     public static ArrayList getResultSet() throws ClassNotFoundException, SQLException {
         ArrayList<Department> arr;
         connect();

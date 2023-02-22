@@ -29,7 +29,6 @@ public class JDBCDemo {
             System.out.println(e.toString());
         }
     }
-
     static void testProject() {
         Project project = new Project("Z", "25-OCT-22");
         int r = 0;
@@ -52,7 +51,6 @@ public class JDBCDemo {
             System.out.println(e.toString());
         }
     }
-
     static void testDepartment() {
         Department department = new Department("HR", "Fadi");
         int r = 0;
@@ -75,7 +73,6 @@ public class JDBCDemo {
             System.out.println(e.toString());
         }
     }
-
     static void testEmpProj() {
         EmpProj empProj = new EmpProj(7, "A", "Aleppo", 22);
         empProj = new EmpProj(7, "A", null, 0);
@@ -99,9 +96,63 @@ public class JDBCDemo {
             System.out.println(e.toString());
         }
     }
-
+    
+    static void testEmployeeEmpProj() {
+        Employee employee = new Employee(5, null, null);
+        ArrayList<EmpProj> arr = null;
+        try {
+            arr = EmpProj.getResultSet(employee);
+        } catch (ClassNotFoundException | SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        for (EmpProj e : arr) {
+            System.out.println(e.toString());
+        }
+    }
+    static void testProjectEmpProj() {
+        ArrayList<EmpProj> arr = null;
+        try {
+            arr = EmpProj.getResultSet(new Project("D", null));
+        } catch (ClassNotFoundException | SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        for (EmpProj e : arr) {
+            System.out.println(e.toString());
+        }
+    }
+    static void testDepartmentEmp() {
+        ArrayList<Employee> arr = null;
+        try {
+            arr = Employee.getResultSet(new Department("Accounts", null));
+        } catch (ClassNotFoundException | SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        for (Employee e : arr) {
+            System.out.println(e.toString());
+        }
+    }
+    
+    static void testModelId() {
+        Project proj = null;
+        Employee emp = null;
+        EmpProj ep = null;
+        Department d = null;
+        try {
+            proj = Project.getFromId("D");
+            emp = Employee.getFromNo(5);
+            ep = EmpProj.getFromId(5, "A");
+            d = Department.getFromDept("Accounts");
+        } catch (ClassNotFoundException | SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        System.out.println(proj.toString());
+        System.out.println(emp.toString());
+        System.out.println(ep.toString());
+        System.out.println(d.toString());
+    }
+    
     public static void main(String[] args) {
-        testEmployee();
+        testModelId();
 //        System.out.println(new EmpProj(1, null, null, 1).isValid());
 //        System.out.println(new EmpProj(1, "A", null, 1).isValid());
 //        System.out.println(new EmpProj(1, null, "City", 1).isValid());

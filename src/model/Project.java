@@ -33,6 +33,16 @@ public class Project extends DBModel {
         return "Project{" + "projId=" + projId + ", projStartDate=" + projStartDate + '}';
     }
 
+    public static Project getFromId(String projId) throws ClassNotFoundException, SQLException {
+        connect();
+        String sql = "SELECT * FROM Project WHERE proj_id = ?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, projId);
+        ResultSet res = statement.executeQuery();
+        res.next();
+        return new Project(res);
+    }
+    
     public static ArrayList getResultSet() throws ClassNotFoundException, SQLException {
         ArrayList<Project> arr;
         connect();
@@ -47,7 +57,7 @@ public class Project extends DBModel {
         connection.close();
         return arr;
     }
-
+    
     @Override
     public int dbInsert() throws ClassNotFoundException, SQLException {
         connect();

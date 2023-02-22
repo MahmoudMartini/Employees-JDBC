@@ -47,11 +47,54 @@ public class EmpProj extends DBModel {
         return "EmpProj{" + "emp_no=" + empNo + ", proj_id=" + projId + ", location=" + location + ", weeks_proj=" + weeksProj + '}';
     }
 
+    public static EmpProj getFromId(int empNo, String projId) throws ClassNotFoundException, SQLException {
+        connect();
+        String sql = "SELECT * FROM EmpProj WHERE emp_no = ? AND proj_id = ?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, empNo);
+        statement.setString(2, projId);
+        ResultSet res = statement.executeQuery();
+        res.next();
+        return new EmpProj(res);
+    }
+
     public static ArrayList getResultSet() throws ClassNotFoundException, SQLException {
         ArrayList<EmpProj> arr;
         connect();
         String sql = "SELECT * FROM EmpProj;";
         PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet res = statement.executeQuery();
+
+        arr = new ArrayList<>();
+        while (res.next()) {
+            arr.add(new EmpProj(res));
+        }
+        connection.close();
+        return arr;
+    }
+
+    public static ArrayList getResultSet(Employee employee) throws ClassNotFoundException, SQLException {
+        ArrayList<EmpProj> arr;
+        connect();
+        String sql = "SELECT * FROM EmpProj ep, Employee e WHERE ep.emp_no = e.emp_no AND e.emp_no = ?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, employee.getEmpNo());
+        ResultSet res = statement.executeQuery();
+
+        arr = new ArrayList<>();
+        while (res.next()) {
+            arr.add(new EmpProj(res));
+        }
+        connection.close();
+        return arr;
+    }
+
+    public static ArrayList getResultSet(Project project) throws ClassNotFoundException, SQLException {
+        ArrayList<EmpProj> arr;
+        connect();
+        String sql = "SELECT * FROM EmpProj ep, Project p WHERE ep.proj_id = p.proj_id AND p.proj_id = ?;";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, project.getProjId());
         ResultSet res = statement.executeQuery();
 
         arr = new ArrayList<>();
