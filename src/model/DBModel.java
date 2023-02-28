@@ -3,12 +3,15 @@ package model;
 // another possible name: SQLModel
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 abstract class DBModel {
 
     protected static Connection connection;
+    protected static PreparedStatement statement;
+    protected static String sql;
 //    protected final int CONNECTION_ERROR_CODE = -1;
 
     protected static void connect() throws ClassNotFoundException, SQLException {
@@ -17,15 +20,18 @@ abstract class DBModel {
         connection = DriverManager.getConnection(url);
     }
 
-    protected static ArrayList getResultSet() throws ClassNotFoundException, SQLException {
-        return null;
+    protected static PreparedStatement prepareStatement(String sql) throws ClassNotFoundException, SQLException {
+        connect();
+        statement = connection.prepareStatement(sql);
+        return statement;
     }
 
-    abstract public int dbInsert() throws ClassNotFoundException, SQLException;
-
-    abstract public int dbUpdate() throws ClassNotFoundException, SQLException;
-
-    abstract public int dbDelete() throws ClassNotFoundException, SQLException;
-
+    protected static void disconnect() throws SQLException {
+        statement.close();
+        connection.close();
+    }
+    
+//    protected ArrayList dbQuery() throws SQLException { return null; }
+    
     abstract public boolean isValid();
 }

@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class Department extends DBModel {
+public class Department extends DBModel implements DML {
 
     private String dept;
     private String manager;

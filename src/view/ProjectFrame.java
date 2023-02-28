@@ -22,6 +22,7 @@ public class ProjectFrame extends javax.swing.JFrame implements Form {
      */
     public ProjectFrame() {
         initComponents();
+        project = new Project();
         tableModel = (DefaultTableModel) jTable1.getModel();
         updateTable();
     }
@@ -302,7 +303,7 @@ public class ProjectFrame extends javax.swing.JFrame implements Form {
 
         ArrayList<Project> results = null;
         try {
-            results = Project.getResultSet();
+            results =  project.getResultSet();
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(ProjectFrame.class.getName()).log(Level.SEVERE, null, ex);
         }

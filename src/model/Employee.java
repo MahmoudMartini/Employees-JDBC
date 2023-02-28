@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class Employee extends DBModel {
+public class Employee extends DBModel implements DML {
 
     private int empNo;
     private String empName = "";
