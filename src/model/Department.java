@@ -10,6 +10,9 @@ public class Department extends DBModel implements DML {
     private String dept;
     private String manager;
 
+    public Department() {
+    }
+
     Department(ResultSet row) throws SQLException {
         this.dept = row.getString("dept");
         this.manager = row.getString("manager");

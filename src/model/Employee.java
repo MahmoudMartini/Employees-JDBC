@@ -11,6 +11,9 @@ public class Employee extends DBModel implements DML {
     private String empName = "";
     private String dept = "";
 
+    public Employee() {
+    }
+
     Employee(ResultSet row) throws SQLException {
         this.empNo = row.getInt("emp_no");
         this.empName = row.getString("emp_name");

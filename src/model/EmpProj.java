@@ -12,6 +12,9 @@ public class EmpProj extends DBModel implements DML {
     private String location;
     private int weeksProj;
 
+    public EmpProj() {
+    }
+
     EmpProj(ResultSet row) throws SQLException {
         this.empNo = row.getInt("emp_no");
         this.projId = row.getString("proj_id");

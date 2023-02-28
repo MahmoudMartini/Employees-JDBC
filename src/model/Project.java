@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class Project extends DBModel implements DML, DQL {
+public class Project extends DBModel implements DML {
 
     private String projId;
     private String projStartDate;
@@ -43,8 +43,8 @@ public class Project extends DBModel implements DML, DQL {
         return "Project{" + "projId=" + projId + ", projStartDate=" + projStartDate + '}';
     }
 
-    @Override
-    public Project getFromId(String projId) throws ClassNotFoundException, SQLException {
+    public static Project getFromId(String projId) throws ClassNotFoundException, SQLException {
+//        String projId = (String) id;
         String sql = "SELECT * FROM Project WHERE proj_id = ?;";
         prepareStatement(sql);
         statement.setString(1, projId);
@@ -57,8 +57,7 @@ public class Project extends DBModel implements DML, DQL {
         return project;
     }
 
-    @Override
-    public ArrayList getResultSet() throws ClassNotFoundException, SQLException {
+    public static ArrayList getResultSet() throws ClassNotFoundException, SQLException {
         String sql = "SELECT * FROM Project;";
         prepareStatement(sql);
 

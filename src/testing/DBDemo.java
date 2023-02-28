@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import model.*;
 
 public abstract class DBDemo {
+
     static Project project;
     static Employee employee;
     static Department department;
@@ -35,6 +36,20 @@ public abstract class DBDemo {
         }
     }
 
+    public static void testGetFromId() {
+        DQL dql = null;
+        try {
+//            project = Project.getFromId("D");
+//            employee = Employee.getFromNo(5);
+//            empProj = EmpProj.getFromId(5, "A");
+//            department = Department.getFromDept("Accounts");
+            dql = project.getFromId("D");
+        } catch (ClassNotFoundException | SQLException ex) {
+            System.err.println(ex.getMessage());
+        }
+        System.out.println(dql.toString());
+    }
+
     abstract void testWithForeign();
 
     abstract void testIsValid();
@@ -49,9 +64,9 @@ public abstract class DBDemo {
         empProj = new EmpProj(7, "A", null, 0);
         department = new Department("HR", "Fadi");
         department = new Department("Accounts", null);
-        
-        DBDemo.testQuery(new Project());
-        
+
+        DBDemo.testGetFromId();
+
 //        System.out.println(new EmpProj(1, null, null, 1).isValid());
 //        System.out.println(new EmpProj(1, "A", null, 1).isValid());
 //        System.out.println(new EmpProj(1, null, "City", 1).isValid());
@@ -64,8 +79,4 @@ public abstract class DBDemo {
 //        System.out.println(new EmpProj(0, "", "", 0).isValid());
     }
 
-//    proj  = Project.getFromId("D");
-//    emp  = Employee.getFromNo(5);
-//    ep  = EmpProj.getFromId(5, "A");
-//    d  = Department.getFromDept("Accounts");
 }
