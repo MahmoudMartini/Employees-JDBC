@@ -1,0 +1,107 @@
+@startuml
+abstract class model.DBModel
+abstract class testing.DBDemo
+annotation java.lang.Override
+annotation java.lang.SuppressWarnings
+class java.lang.Integer
+class java.sql.Connection
+class java.sql.DriverManager
+class java.sql.PreparedStatement
+class java.sql.ResultSet
+class java.sql.SQLException
+class java.util.ArrayList
+class java.util.Vector
+class java.util.logging.Level
+class java.util.logging.Logger
+class javax.swing.JFrame
+class javax.swing.JOptionPane
+class javax.swing.table.DefaultTableModel
+class model.Department
+class model.EmpProj
+class model.Employee
+class model.ExtendedEmpProj
+class model.ExtendedEmployee
+class model.ExtendedProject
+class model.Project
+class view.EmployeeFrame
+class view.ProjectFrame
+interface model.DML
+interface model.DQL
+interface view.Form
+model.DBModel ..> java.sql.Connection
+model.DBModel ..> java.sql.DriverManager
+model.DBModel ..> java.sql.PreparedStatement
+model.DBModel ..> java.sql.SQLException
+testing.DBDemo ..> java.sql.SQLException
+testing.DBDemo ..> java.util.ArrayList
+model.Department --|> model.DBModel
+model.Department ..> java.lang.Override
+model.Department ..> java.sql.PreparedStatement
+model.Department ..> java.sql.ResultSet
+model.Department ..> java.sql.SQLException
+model.Department ..> java.util.ArrayList
+model.Department --|> model.DML
+model.EmpProj --|> model.DBModel
+model.EmpProj ..> java.lang.Override
+model.EmpProj ..> java.sql.PreparedStatement
+model.EmpProj ..> java.sql.ResultSet
+model.EmpProj ..> java.sql.SQLException
+model.EmpProj ..> java.util.ArrayList
+model.EmpProj --|> model.DML
+model.Employee --|> model.DBModel
+model.Employee ..> java.lang.Override
+model.Employee ..> java.sql.PreparedStatement
+model.Employee ..> java.sql.ResultSet
+model.Employee ..> java.sql.SQLException
+model.Employee ..> java.util.ArrayList
+model.Employee --|> model.DML
+model.ExtendedEmpProj --|> model.DBModel
+model.ExtendedEmpProj ..> java.lang.Override
+model.ExtendedEmpProj ..> java.sql.ResultSet
+model.ExtendedEmpProj ..> java.sql.SQLException
+model.ExtendedEmpProj ..> java.util.ArrayList
+model.ExtendedEmpProj --|> model.DQL
+model.ExtendedEmployee --|> model.DBModel
+model.ExtendedEmployee ..> java.lang.Override
+model.ExtendedEmployee ..> java.sql.ResultSet
+model.ExtendedEmployee ..> java.sql.SQLException
+model.ExtendedEmployee ..> java.util.ArrayList
+model.ExtendedEmployee --|> model.DQL
+model.ExtendedProject --|> model.DBModel
+model.ExtendedProject ..> java.lang.Override
+model.ExtendedProject ..> java.sql.ResultSet
+model.ExtendedProject ..> java.sql.SQLException
+model.ExtendedProject ..> java.util.ArrayList
+model.ExtendedProject --|> model.DQL
+model.Project --|> model.DBModel
+model.Project ..> java.lang.Override
+model.Project ..> java.sql.ResultSet
+model.Project ..> java.sql.SQLException
+model.Project ..> java.util.ArrayList
+model.Project --|> model.DML
+view.EmployeeFrame ..> java.lang.SuppressWarnings
+view.EmployeeFrame ..> java.lang.Integer
+view.EmployeeFrame ..> java.util.ArrayList
+view.EmployeeFrame ..> java.util.Vector
+view.EmployeeFrame ..> java.util.logging.Level
+view.EmployeeFrame ..> java.util.logging.Logger
+view.EmployeeFrame --|> javax.swing.JFrame
+view.EmployeeFrame ..> javax.swing.JOptionPane
+view.EmployeeFrame ..> javax.swing.table.DefaultTableModel
+view.EmployeeFrame ..> model.Employee
+view.ProjectFrame ..> java.lang.Override
+view.ProjectFrame ..> java.lang.SuppressWarnings
+view.ProjectFrame ..> java.lang.Integer
+view.ProjectFrame ..> java.sql.SQLException
+view.ProjectFrame ..> java.util.ArrayList
+view.ProjectFrame ..> java.util.logging.Level
+view.ProjectFrame ..> java.util.logging.Logger
+view.ProjectFrame --|> javax.swing.JFrame
+view.ProjectFrame ..> javax.swing.JOptionPane
+view.ProjectFrame ..> javax.swing.table.DefaultTableModel
+view.ProjectFrame ..> model.Project
+view.ProjectFrame --|> view.Form
+model.DML ..> java.sql.SQLException
+model.DQL ..> java.sql.SQLException
+model.DQL ..> java.util.ArrayList
+@enduml
