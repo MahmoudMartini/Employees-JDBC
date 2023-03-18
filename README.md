@@ -2,5 +2,4 @@
 Editable list of all tasks in a company; in which employees takes part in some projects.
 
 
-https://user-images.githubusercontent.com/90216066/226135028-27f2437d-aef2-4206-91e8-8bf499ceee17.mp4
-
+![bandicam 2023-03-18 22-37-38-420](https://user-images.githubusercontent.com/90216066/226139201-7692cc93-c98f-4bde-929b-75a2482fb1ba.gif)
