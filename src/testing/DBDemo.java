@@ -14,20 +14,9 @@ public abstract class DBDemo {
     
     public static void main(String[] args) {
         DBDemo.queryFromId();
-//        DBDemo.query(new ExtendedProject());
-//        DBDemo.query(new ExtendedEmployee());
-        DBDemo.query(new ExtendedEmpProj());
-
-//        System.out.println(new EmpProj(1, null, null, 1).isValid());
-//        System.out.println(new EmpProj(1, "A", null, 1).isValid());
-//        System.out.println(new EmpProj(1, null, "City", 1).isValid());
-//        System.out.println(new EmpProj(1, "A", "City", 1).isValid());
-//        System.out.println(new EmpProj(1, "A", "", 1).isValid());
-//        System.out.println(new EmpProj(1, "", "City", 1).isValid());
-//        System.out.println(new EmpProj(1, "", "", 1).isValid());
-//        System.out.println(new EmpProj(0, "A", "City", 1).isValid());
-//        System.out.println(new EmpProj(1, "A", "City", 0).isValid());
-//        System.out.println(new EmpProj(0, "", "", 0).isValid());
+        DBDemo.query(new ExtendedProject());
+        DBDemo.query(new ExtendedEmployee());
+//        DBDemo.query(new ExtendedEmpProj());
     }
 
     public static void update(DML dml) {
@@ -80,4 +69,14 @@ public abstract class DBDemo {
     abstract void withForeign();
 
     abstract void isValid();
+//        System.out.println(new EmpProj(1, null, null, 1).isValid());
+//        System.out.println(new EmpProj(1, "A", null, 1).isValid());
+//        System.out.println(new EmpProj(1, null, "City", 1).isValid());
+//        System.out.println(new EmpProj(1, "A", "City", 1).isValid());
+//        System.out.println(new EmpProj(1, "A", "", 1).isValid());
+//        System.out.println(new EmpProj(1, "", "City", 1).isValid());
+//        System.out.println(new EmpProj(1, "", "", 1).isValid());
+//        System.out.println(new EmpProj(0, "A", "City", 1).isValid());
+//        System.out.println(new EmpProj(1, "A", "City", 0).isValid());
+//        System.out.println(new EmpProj(0, "", "", 0).isValid());
 }

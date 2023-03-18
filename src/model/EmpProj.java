@@ -22,11 +22,11 @@ public class EmpProj extends DBModel implements DML {
         this.weeksProj = row.getInt("weeks_proj");
     }
 
-    public EmpProj(int emp_no, String proj_id, String location, int weeks_proj) {
-        this.empNo = emp_no;
-        this.projId = proj_id;
+    public EmpProj(int empNo, String projId, String location, int weeksProj) {
+        this.empNo = empNo;
+        this.projId = projId;
         this.location = location;
-        this.weeksProj = weeks_proj;
+        this.weeksProj = weeksProj;
     }
 
     public int getEmpNo() {
@@ -45,6 +45,22 @@ public class EmpProj extends DBModel implements DML {
         return weeksProj;
     }
 
+    public void setEmpNo(int empNo) {
+        this.empNo = empNo;
+    }
+
+    public void setProjId(String projId) {
+        this.projId = projId;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public void setWeeksProj(int weeksProj) {
+        this.weeksProj = weeksProj;
+    }
+
     @Override
     public String toString() {
         return "EmpProj{" + "emp_no=" + empNo + ", proj_id=" + projId + ", location=" + location + ", weeks_proj=" + weeksProj + '}';
@@ -58,7 +74,9 @@ public class EmpProj extends DBModel implements DML {
         statement.setString(2, projId);
         ResultSet res = statement.executeQuery();
         res.next();
-        return new EmpProj(res);
+        EmpProj empProj = new EmpProj(res);
+        connection.close();
+        return empProj;
     }
 
     public static ArrayList getResultSet() throws ClassNotFoundException, SQLException {

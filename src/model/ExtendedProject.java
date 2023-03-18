@@ -4,12 +4,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * 
+ * Project v EmpProj
+ */
 public class ExtendedProject extends DBModel implements DQL {
 
     private Project project;
     private EmpProj empProj;
 
     public ExtendedProject() {
+        this.project = new Project();
+        this.empProj = new EmpProj();
     }
 
     ExtendedProject(ResultSet row) throws SQLException {
@@ -17,8 +23,28 @@ public class ExtendedProject extends DBModel implements DQL {
         this.empProj = new EmpProj(row);
     }
 
-    public ExtendedProject(Project project, EmpProj empProj) {
+    private ExtendedProject(Project project, EmpProj empProj) {
         this.project = project;
+        this.empProj = empProj;
+    }
+    public ExtendedProject(String projId, String projStartDate, int empNo, String location, int weeksProj) {
+        this.project = new Project(projId, projStartDate);
+        this.empProj = new EmpProj(empNo, projId, location, weeksProj);
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public EmpProj getEmpProj() {
+        return empProj;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public void setEmpProj(EmpProj empProj) {
         this.empProj = empProj;
     }
 

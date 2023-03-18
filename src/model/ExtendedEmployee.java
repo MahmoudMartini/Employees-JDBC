@@ -4,22 +4,33 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ *
+ * Employee v Department
+ */
 public class ExtendedEmployee extends DBModel implements DQL {
 
     private Employee employee;
-    private EmpProj empProj;
+    private Department department;
 
     public ExtendedEmployee() {
+        this.employee = new Employee();
+        this.department = new Department();
     }
 
     ExtendedEmployee(ResultSet row) throws SQLException {
         this.employee = new Employee(row);
-        this.empProj = new EmpProj(row);
+        this.department = new Department(row);
     }
 
-    public ExtendedEmployee(Employee employee, EmpProj empProj) {
+    private ExtendedEmployee(Employee employee, Department department) {
         this.employee = employee;
-        this.empProj = empProj;
+        this.department = department;
+    }
+
+    public ExtendedEmployee(int empNo, String empName, String dept, String manager) {
+        this.employee = new Employee(empNo, empName, dept);
+        this.department = new Department(dept, manager);
     }
 
     public int getEmpNo() {
@@ -34,27 +45,19 @@ public class ExtendedEmployee extends DBModel implements DQL {
         return employee.getDept();
     }
 
-    public String getProjId() {
-        return empProj.getProjId();
-    }
-
-    public String getLocation() {
-        return empProj.getLocation();
-    }
-
-    public int getWeeksProj() {
-        return empProj.getWeeksProj();
+    public String getManager() {
+        return department.getManager();
     }
 
     @Override
     public String toString() {
-        return "ExtendedEmployee{" + employee.toString() + ", " + empProj.toString() + '}';
+        return "ExtendedEmployee{" + employee.toString() + ", " + department.toString() + '}';
     }
 
     @Override
     public ArrayList getResultSet() throws ClassNotFoundException, SQLException {
         ArrayList<DBModel> arr;
-        String sql = "SELECT * FROM Employee e, EmpProj ep WHERE e.emp_no = ep.emp_no;";
+        String sql = "SELECT * FROM Employee e, department d WHERE e.dept = d.dept;";
         prepareStatement(sql);
         ResultSet res = statement.executeQuery();
         
@@ -68,6 +71,6 @@ public class ExtendedEmployee extends DBModel implements DQL {
 
     @Override
     public boolean isValid() {
-        return employee.isValid() && empProj.isValid();
+        return employee.isValid() && department.isValid();
     }
 }

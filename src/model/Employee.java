@@ -8,8 +8,8 @@ import java.util.ArrayList;
 public class Employee extends DBModel implements DML {
 
     private int empNo;
-    private String empName = "";
-    private String dept = "";
+    private String empName;
+    private String dept;
 
     public Employee() {
     }
@@ -20,9 +20,9 @@ public class Employee extends DBModel implements DML {
         this.dept = row.getString("dept");
     }
 
-    public Employee(int emp_no, String emp_name, String dept) {
-        this.empNo = emp_no;
-        this.empName = emp_name;
+    public Employee(int empNo, String empName, String dept) {
+        this.empNo = empNo;
+        this.empName = empName;
         this.dept = dept;
     }
 
@@ -38,6 +38,18 @@ public class Employee extends DBModel implements DML {
         return dept;
     }
 
+    public void setEmpNo(int empNo) {
+        this.empNo = empNo;
+    }
+
+    public void setEmpName(String empName) {
+        this.empName = empName;
+    }
+
+    public void setDept(String dept) {
+        this.dept = dept;
+    }
+
     @Override
     public String toString() {
         return "Employee{" + "emp_no=" + empNo + ", emp_name=" + empName + ", dept=" + dept + '}';
@@ -50,7 +62,9 @@ public class Employee extends DBModel implements DML {
         statement.setInt(1, empNO);
         ResultSet res = statement.executeQuery();
         res.next();
-        return new Employee(res);
+        Employee employee = new Employee(res);
+        connection.close();
+        return employee;
     }
 
     public static ArrayList<Employee> getResultSet() throws ClassNotFoundException, SQLException {

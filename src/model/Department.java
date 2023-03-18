@@ -31,6 +31,14 @@ public class Department extends DBModel implements DML {
         return manager;
     }
 
+    public void setDept(String dept) {
+        this.dept = dept;
+    }
+
+    public void setManager(String manager) {
+        this.manager = manager;
+    }
+
     @Override
     public String toString() {
         return "Department{" + "dept=" + dept + ", manager=" + manager + '}';
@@ -43,7 +51,9 @@ public class Department extends DBModel implements DML {
         statement.setString(1, dept);
         ResultSet res = statement.executeQuery();
         res.next();
-        return new Department(res);
+        Department department = new Department(res);
+        connection.close();
+        return department;
     }
 
     public static ArrayList getResultSet() throws ClassNotFoundException, SQLException {
