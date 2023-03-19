@@ -50,11 +50,11 @@ public class EmployeeFrame extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Employee Table");
+        jLabel1.setText("Employees' table");
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
         jPanel1.setToolTipText("");

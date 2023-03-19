@@ -20,16 +20,20 @@ import model.Project;
 public class MainFrame extends FrameForm {
 
     private Mode selectedMode;
-    private JTextField[] foreignFields;
-    private JTextField[] nativeFields;
+    private final JTextField[] foreignFields;
+    private final JTextField[] nativeFields;
     private ExtendedEmpProj xEmpProj;
-    private DefaultTableModel tableModel;
+    private final DefaultTableModel tableModel;
     private boolean tableClicked = false;
+    private final ProjectFrame projectFrame;
+    private final EmployeeFrame employeeFrame;
 
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
+        this.projectFrame = new ProjectFrame();
+        this.employeeFrame = new EmployeeFrame();
         this.xEmpProj = new ExtendedEmpProj();
 
         this.nativeFields = new JTextField[]{txtEmpNo, txtProjId, txtLocation, txtWeeksProj};
@@ -56,6 +60,8 @@ public class MainFrame extends FrameForm {
         jTable1 = new javax.swing.JTable();
         addModeButton = new javax.swing.JButton();
         editModeButton = new javax.swing.JButton();
+        showProjectsButton = new javax.swing.JButton();
+        showEmployeesButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         informationLabel = new javax.swing.JLabel();
         addButton = new javax.swing.JButton();
@@ -78,10 +84,13 @@ public class MainFrame extends FrameForm {
         deleteButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Employees Projects");
 
         titleLabel.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         titleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         titleLabel.setText("Company's tasks made till now:");
+
+        jPanel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         jTable1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -136,6 +145,23 @@ public class MainFrame extends FrameForm {
             }
         });
 
+        showProjectsButton.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        showProjectsButton.setText("show Projects");
+        showProjectsButton.setPreferredSize(new java.awt.Dimension(165, 31));
+        showProjectsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showProjectsButtonActionPerformed(evt);
+            }
+        });
+
+        showEmployeesButton.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        showEmployeesButton.setText("Show employees");
+        showEmployeesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showEmployeesButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -146,7 +172,11 @@ public class MainFrame extends FrameForm {
                 .addComponent(addModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(editModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(showEmployeesButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(showProjectsButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -155,7 +185,9 @@ public class MainFrame extends FrameForm {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(editModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(editModeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(showProjectsButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(showEmployeesButton))
                 .addContainerGap())
         );
 
@@ -526,6 +558,14 @@ public class MainFrame extends FrameForm {
         setMode(Mode.DEFAULT);
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    private void showProjectsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showProjectsButtonActionPerformed
+        projectFrame.setVisible(true);
+    }//GEN-LAST:event_showProjectsButtonActionPerformed
+
+    private void showEmployeesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showEmployeesButtonActionPerformed
+        employeeFrame.setVisible(true);
+    }//GEN-LAST:event_showEmployeesButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -582,6 +622,8 @@ public class MainFrame extends FrameForm {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JButton showEmployeesButton;
+    private javax.swing.JButton showProjectsButton;
     private javax.swing.JLabel titleLabel;
     private javax.swing.JTextField txtDept;
     private javax.swing.JTextField txtEmpName;
